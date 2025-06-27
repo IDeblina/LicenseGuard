@@ -1,0 +1,86 @@
+package com.project.licenseservice.service;
+
+
+import com.project.licenseservice.Mapper.LicenseMapper;
+import com.project.licenseservice.dto.LicenseDto;
+import com.project.licenseservice.entity.License;
+import com.project.licenseservice.exception.ResourceNotFoundException;
+import com.project.licenseservice.repository.LicenseRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class LicenseServiceImpl implements LicenseService{
+
+    private LicenseRepository licenseRepository;
+
+    private LicenseMapper mapper;
+
+    @Autowired
+    public LicenseServiceImpl(LicenseRepository licenseRepository, LicenseMapper mapper) {
+        this.licenseRepository = licenseRepository;
+        this.mapper = mapper;
+
+    }
+
+    @Override
+    public void addLicense(LicenseDto licenseDto) {
+        License license = mapper.licenseDtoToLicense(licenseDto);
+        licenseRepository.save(license);
+    }
+
+    /**
+     * Fetches a license by its ID.
+     *
+     * @param id the ID of the license to fetch
+     * @return the LicenseDto object
+     * @throws ResourceNotFoundException if the license is not found
+     * @implNote This method logs the ID in the exception message.
+     * Note: Make sure the ID exists in the database.
+     */
+    @Override
+    public LicenseDto fetchLicenseById(Long id) {
+        License license = licenseRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("license not found with id "+ id));
+        return mapper.licsenseToLicenseDto(license);
+    }
+
+    @Override
+    public List<LicenseDto> fetchLicenses() {
+
+        List<License> licenses = licenseRepository.findAll();
+
+        return licenses.stream()
+                .map(license->mapper.licsenseToLicenseDto(license))
+                .collect(Collectors.toList());
+    }
+
+
+    //very important method
+    @Override
+    public List<LicenseDto> fetchExpiredLicenses() {
+        //fetch all the list of liceses frm db
+        List<License> licenses = licenseRepository.findAll();
+
+
+        //filter this list and find the expires list of licenses
+        LocalDate today = LocalDate.now();
+
+        List<License> expiringList = licenses.stream().filter(license -> {
+            LocalDate expiryDate = license.getExpiryDate();
+            long daysBetween = expiryDate.toEpochDay() - today.toEpochDay();
+            return daysBetween == 7;
+        }).collect(Collectors.toList());
+
+        //return list of expired licenses
+        List<LicenseDto> expiredLicenses =  expiringList.stream()
+                .map(expired->mapper.licsenseToLicenseDto(expired))
+                .collect(Collectors.toList());
+
+        return expiredLicenses;
+    }
+}
