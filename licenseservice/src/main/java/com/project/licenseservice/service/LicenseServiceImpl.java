@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +45,7 @@ public class LicenseServiceImpl implements LicenseService{
     @Override
     public LicenseDto fetchLicenseById(Long id) {
         License license = licenseRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("license not found with id "+ id));
-        return mapper.licsenseToLicenseDto(license);
+        return mapper.licenseToLicenseDto(license);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class LicenseServiceImpl implements LicenseService{
         List<License> licenses = licenseRepository.findAll();
 
         return licenses.stream()
-                .map(license->mapper.licsenseToLicenseDto(license))
+                .map(license->mapper.licenseToLicenseDto(license))
                 .collect(Collectors.toList());
     }
 
@@ -78,7 +77,7 @@ public class LicenseServiceImpl implements LicenseService{
 
         //return list of expired licenses
         List<LicenseDto> expiredLicenses =  expiringList.stream()
-                .map(expired->mapper.licsenseToLicenseDto(expired))
+                .map(expired->mapper.licenseToLicenseDto(expired))
                 .collect(Collectors.toList());
 
         return expiredLicenses;
