@@ -1,0 +1,7 @@
+package com.project.trackingservice.service;
+
+
+public interface TrackingService {
+
+    public String getTrackingStatus();
+}

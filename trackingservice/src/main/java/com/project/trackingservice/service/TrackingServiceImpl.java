@@ -1,0 +1,51 @@
+package com.project.trackingservice.service;
+
+
+import com.project.trackingservice.client.LicenseServiceFeignClient;
+import com.project.trackingservice.dto.LicenseDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class TrackingServiceImpl implements TrackingService{
+
+
+    private static final Logger log = LoggerFactory.getLogger(TrackingServiceImpl.class);
+    private LicenseServiceFeignClient licenseServiceFeignClient;
+
+    @Autowired
+    public TrackingServiceImpl(LicenseServiceFeignClient licenseServiceFeignClient) {
+        this.licenseServiceFeignClient = licenseServiceFeignClient;
+    }
+
+
+    @Override
+    public List<LicenseDto> getTrackingStatus() {
+        ResponseEntity<List<LicenseDto>> response = licenseServiceFeignClient.getExpiredLicenses();
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Failed to fetch tracking status from License Service");
+        }
+    }
+
+    @Scheduled(cron = "0 59 22 * * ?") // Runs every day at 10:59 PM
+    public void scheduledTrackingStatusCheck() {
+        try {
+            List<LicenseDto> expiredLicenses = getTrackingStatus();
+            log.info("get request send, Scheduled tracking status check completed. Expired licenses: {}", expiredLicenses.size());
+            // Add logic to process or log expiredLicenses if needed
+        } catch (Exception e) {
+            // Handle exception (e.g., log error)
+            log.error("Error during scheduled tracking status check: {}", e.getMessage(), e);
+        }
+    }
+
+
+}
