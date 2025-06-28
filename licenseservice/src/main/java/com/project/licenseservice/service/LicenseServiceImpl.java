@@ -1,6 +1,7 @@
 package com.project.licenseservice.service;
 
 
+import com.project.licenseservice.exception.ResourceAlreadyExistsException;
 import com.project.licenseservice.mapper.LicenseMapper;
 import com.project.licenseservice.dto.LicenseDto;
 import com.project.licenseservice.entity.License;
@@ -29,6 +30,10 @@ public class LicenseServiceImpl implements LicenseService{
 
     @Override
     public void addLicense(LicenseDto licenseDto) {
+        boolean exists = licenseRepository.existsBySoftwareName(licenseDto.getSoftwareName());
+        if (exists) {
+            throw new ResourceAlreadyExistsException("Software with name " + licenseDto.getSoftwareName() + " already exists.");
+        }
         String letters = "";
         for (int i = 0; i < 3; i++) {
             letters += (char) ('A' + (int)(Math.random() * 26));
@@ -38,6 +43,7 @@ public class LicenseServiceImpl implements LicenseService{
         licenseDto.setLicenseId(licenseId);
 
         License license = mapper.licenseDtoToLicense(licenseDto);
+        // Set the purchase date to today if not provided
         licenseRepository.save(license);
     }
 

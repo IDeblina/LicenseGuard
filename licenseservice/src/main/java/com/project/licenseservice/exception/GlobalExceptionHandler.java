@@ -28,6 +28,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<ExceptionResponse> handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex){
+        ExceptionResponse response = new ExceptionResponse();
+        response.setStausCode(HttpStatus.BAD_REQUEST.value());
+        response.setMessage(ex.getMessage());
+        response.setTimestamp(LocalDateTime.now().toString());
+        log.info("Resource already exists exception occured :"+ ex.getMessage());
+        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationExceptions(MethodArgumentNotValidException ex, WebRequest request) {
         BindingResult bindingResult = ex.getBindingResult();
