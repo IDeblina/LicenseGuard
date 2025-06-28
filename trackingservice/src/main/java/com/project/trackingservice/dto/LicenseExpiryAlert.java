@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
-public class LicenseExiperyAlert {
+public class LicenseExpiryAlert {
     private String softwareName;
     private String department;
     private String licenseId;

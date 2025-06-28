@@ -1,6 +1,6 @@
 package com.project.emailservice.config;
 
-import com.project.emailservice.dto.LicenseExiperyAlert;
+import com.project.emailservice.dto.LicenseExpiryAlert;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class KafkaConsumerConfig {
 
     @Bean
-    public ConsumerFactory<String, LicenseExiperyAlert> consumerFactory() {
+    public ConsumerFactory<String, LicenseExpiryAlert> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "email-service-group");
@@ -25,12 +25,12 @@ public class KafkaConsumerConfig {
         props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(),
-                new JsonDeserializer<>(LicenseExiperyAlert.class));
+                new JsonDeserializer<>(LicenseExpiryAlert.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, LicenseExiperyAlert> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, LicenseExiperyAlert> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, LicenseExpiryAlert> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, LicenseExpiryAlert> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }

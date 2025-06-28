@@ -1,6 +1,6 @@
 package com.project.emailservice.service;
 
-import com.project.emailservice.dto.LicenseExiperyAlert;
+import com.project.emailservice.dto.LicenseExpiryAlert;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -16,7 +16,7 @@ public class EmailService {
     private JavaMailSender mailSender;
 
     @KafkaListener(topics = "license-expiry-alerts", groupId = "email-service-group")
-    public void consumeExpiryAlert(LicenseExiperyAlert alert) {
+    public void consumeExpiryAlert(LicenseExpiryAlert alert) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(alert.getEmail());
         message.setSubject("License Expiry Notice: " + alert.getSoftwareName());
