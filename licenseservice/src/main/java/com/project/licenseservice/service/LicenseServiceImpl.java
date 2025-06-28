@@ -1,7 +1,7 @@
 package com.project.licenseservice.service;
 
 
-import com.project.licenseservice.Mapper.LicenseMapper;
+import com.project.licenseservice.mapper.LicenseMapper;
 import com.project.licenseservice.dto.LicenseDto;
 import com.project.licenseservice.entity.License;
 import com.project.licenseservice.exception.ResourceNotFoundException;
