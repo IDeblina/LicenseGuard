@@ -29,6 +29,14 @@ public class LicenseServiceImpl implements LicenseService{
 
     @Override
     public void addLicense(LicenseDto licenseDto) {
+        String letters = "";
+        for (int i = 0; i < 3; i++) {
+            letters += (char) ('A' + (int)(Math.random() * 26));
+        }
+        String numbers = String.format("%07d", (long)(Math.random() * 10_000_000L));
+        String licenseId = letters + "-" + numbers;
+        licenseDto.setLicenseId(licenseId);
+
         License license = mapper.licenseDtoToLicense(licenseDto);
         licenseRepository.save(license);
     }
