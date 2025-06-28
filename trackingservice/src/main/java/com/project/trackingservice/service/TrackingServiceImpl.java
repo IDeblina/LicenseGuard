@@ -47,7 +47,7 @@ public class TrackingServiceImpl implements TrackingService{
         }
     }
 
-    @Scheduled(cron = "0 0 22 * * ?") // Runs every day at 12:05 AM
+    @Scheduled(cron = "0 35 23 * * ?") // Runs every day at 12:05 AM
     public void scheduledTrackingStatusCheck() {
         try {
             List<LicenseDto> expiredLicenses = getTrackingStatus();
@@ -59,7 +59,7 @@ public class TrackingServiceImpl implements TrackingService{
             for (LicenseDto expiredLicense : expiredLicenses){
                 LicenseExiperyAlert alert = new LicenseExiperyAlert();
                 alert.setSoftwareName(expiredLicense.getSoftwareName());
-                alert.setLicenceId(expiredLicense.getLicenceId());
+                alert.setLicenseId(expiredLicense.getLicenseId());
                 alert.setDepartment(expiredLicense.getDepartment());
                 alert.setExpiryDate(expiredLicense.getExpiryDate());
                 alert.setEmail(expiredLicense.getEmail());
