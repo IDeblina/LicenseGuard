@@ -5,6 +5,7 @@ import com.project.trackingservice.constants.TrackingServiceConstants;
 import com.project.trackingservice.dto.LicenseDto;
 import com.project.trackingservice.dto.LicenseExiperyAlert;
 import com.project.trackingservice.exceptions.ClientException;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,23 +31,20 @@ public class TrackingServiceImpl implements TrackingService{
     }
 
     @Override
+    // Retry and CircuitBreaker annotations with fallback method
+    @Retry(name="LICENSE-MICROSERVICE", fallbackMethod = "fallbackLicenseMicroservice")
     public List<LicenseDto> getTrackingStatus() {
-        try {
-            ResponseEntity<List<LicenseDto>> response = licenseServiceFeignClient.getExpiredLicenses();
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                log.info("Successfully fetched tracking status from License Service");
-                return response.getBody();
-            } else {
-                log.warn("Failed to fetch tracking status: {}", response.getStatusCode());
-                throw new ClientException("Failed to fetch tracking status from License Service");
-            }
-        } catch (Exception e) {
-            log.error("Exception while fetching tracking status: {}", e.getMessage(), e);
-            throw new ClientException("Exception while fetching tracking status from License Service");
+        ResponseEntity<List<LicenseDto>> response = licenseServiceFeignClient.getExpiredLicenses();
+        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+            log.info("Successfully fetched tracking status from License Service");
+            return response.getBody();
+        } else {
+            log.warn("Failed to fetch tracking status: {}", response.getStatusCode());
+            throw new ClientException("Failed to fetch tracking status from License Service");
         }
     }
 
-    @Scheduled(cron = "0 35 23 * * ?") // Runs every day at 12:05 AM
+    @Scheduled(cron = "0 02 2 * * ?") // Runs every day at 12:05 AM
     public void scheduledTrackingStatusCheck() {
         try {
             List<LicenseDto> expiredLicenses = getTrackingStatus();
@@ -73,4 +70,11 @@ public class TrackingServiceImpl implements TrackingService{
             log.error("Error during scheduled tracking status check: {}", e.getMessage());
         }
     }
+
+    // Fallback method when retries or circuit breaker is triggered
+    public List<LicenseDto> fallbackLicenseMicroservice(Throwable t) {
+        log.info("License Service is currently unavailable. Please try again later.");
+        return List.of();
+    }
+
 }
