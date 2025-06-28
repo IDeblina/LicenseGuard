@@ -13,6 +13,7 @@ import java.time.LocalDate;
 public class LicenseDto {
     private String softwareName;
     private String department;
+    private String LicenceId;
     private LocalDate purchaseDate;
     private LocalDate expiryDate;
     private Boolean renewed;

@@ -3,14 +3,15 @@ package com.project.trackingservice.dto;
 import lombok.Data;
 
 import java.time.LocalDate;
-
+import java.time.LocalDateTime;
 
 @Data
-public class LicenseDto {
+public class LicenseExiperyAlert {
     private String softwareName;
     private String department;
-    private LocalDate purchaseDate;
+    private String licenceId;
     private LocalDate expiryDate;
-    private Boolean renewed;
     private String email;
+    private String message;
+    private LocalDateTime alertTime;
 }
