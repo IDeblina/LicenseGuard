@@ -12,9 +12,10 @@ import java.time.LocalDate;
 
 
 @Data
-@Getter
-@Setter
 public class LicenseDto {
+
+    private String licenseId; // Unique 10-digit license ID
+
     @NotNull(message = "Software name is mandatory")
     private String softwareName;
 

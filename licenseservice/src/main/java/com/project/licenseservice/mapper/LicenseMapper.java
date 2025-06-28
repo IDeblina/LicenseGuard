@@ -1,4 +1,4 @@
-package com.project.licenseservice.Mapper;
+package com.project.licenseservice.mapper;
 
 import com.project.licenseservice.dto.LicenseDto;
 import com.project.licenseservice.entity.License;
