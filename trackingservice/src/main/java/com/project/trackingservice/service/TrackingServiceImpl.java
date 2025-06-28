@@ -3,7 +3,7 @@ package com.project.trackingservice.service;
 import com.project.trackingservice.client.LicenseServiceFeignClient;
 import com.project.trackingservice.constants.TrackingServiceConstants;
 import com.project.trackingservice.dto.LicenseDto;
-import com.project.trackingservice.dto.LicenseExiperyAlert;
+import com.project.trackingservice.dto.LicenseExpiryAlert;
 import com.project.trackingservice.exceptions.ClientException;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public class TrackingServiceImpl implements TrackingService{
         }
     }
 
-    @Scheduled(cron = "0 02 2 * * ?") // Runs every day at 12:05 AM
+    @Scheduled(cron = "0 25 2 * * ?") // Runs every day at 12:05 AM
     public void scheduledTrackingStatusCheck() {
         try {
             List<LicenseDto> expiredLicenses = getTrackingStatus();
@@ -54,7 +54,7 @@ public class TrackingServiceImpl implements TrackingService{
             }
 
             for (LicenseDto expiredLicense : expiredLicenses){
-                LicenseExiperyAlert alert = new LicenseExiperyAlert();
+                LicenseExpiryAlert alert = new LicenseExpiryAlert();
                 alert.setSoftwareName(expiredLicense.getSoftwareName());
                 alert.setLicenseId(expiredLicense.getLicenseId());
                 alert.setDepartment(expiredLicense.getDepartment());
